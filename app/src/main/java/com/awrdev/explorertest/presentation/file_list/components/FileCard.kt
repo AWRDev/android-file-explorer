@@ -1,5 +1,8 @@
 package com.awrdev.explorertest.presentation.file_list.components
 
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
@@ -17,11 +20,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.awrdev.explorertest.R
+import com.awrdev.explorertest.presentation.file_list.FileListViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun FileCard(filename: String,
+fun FileCard(viewModel: FileListViewModel,
+                filename: String,
                 isSelectable: Boolean,
                 isDirectory: Boolean,
+                onChecked: () -> Unit,
                 modifier: Modifier){
     Row(
         modifier = modifier
@@ -45,13 +52,20 @@ fun FileCard(filename: String,
             .fillMaxWidth()
             .weight(1f))
         if (isSelectable){
-            Checkbox(checked = false, onCheckedChange = {}, Modifier.padding(end = 5.dp))
+            Checkbox(checked = false,
+                onCheckedChange = {
+                    onChecked()
+//                    Log.d("CHECK", "Checked change")
+//                    viewModel.updateChecked()
+                },
+                Modifier.padding(end = 5.dp))
         }
     }
 }
 
-@Preview
-@Composable
-fun Box(){
-    FileCard(filename = "Hello", isDirectory = false, isSelectable = true, modifier = Modifier)
-}
+//@RequiresApi(Build.VERSION_CODES.O)
+//@Preview
+//@Composable
+//fun Box(){
+//    FileCard(FileListViewModel(), filename = "Hello", isDirectory = false, isSelectable = true, modifier = Modifier)
+//}

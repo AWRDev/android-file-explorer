@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,6 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.awrdev.explorertest.presentation.file_list.components.BottomBarMenu
+import com.awrdev.explorertest.presentation.file_list.components.ExplorerAction
 import com.awrdev.explorertest.presentation.file_list.components.FileCard
 import java.nio.file.Files.isDirectory
 import java.nio.file.Paths
@@ -28,23 +32,33 @@ fun FileListScreen(
     files: List<String>,
     viewModel: FileListViewModel
 ) {
-
+    val size = remember {
+        mutableStateOf(1f)
+    }
     Column(modifier = Modifier.fillMaxSize()) {
-        Button(onClick = {
-            for (file in files){
-                Log.d("TAP", file)
+        Row() {
+            Button(onClick = {
+                for (file in files) {
+                    Log.d("TAP", file)
+                }
+                for (i in 0 until 5) {
+                    Log.d("TAP", "Numeric: " + files[i])
+                }
+            }) {
+                Text(text = "Current list is:")
             }
-            for (i in 0 until 5){
-                Log.d("TAP", "Numeric: " + files[i])
+            Button(onClick = {size.value -= 0.1f}) {
+                Text(text = "-")
             }
-        }){
-            Text(text = "Current list is:")
+            Button(onClick = {size.value += 0.1f}) {
+                Text(text = "+")
+            }
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            if (viewModel.state.value.isActionable){
+            if (viewModel.state.value.explorerAction == ExplorerAction.Copy){
                 Button(onClick = { viewModel.cancelAction() }) {
                     Text(text = "X")
                 }
@@ -61,16 +75,20 @@ fun FileListScreen(
         }
         
         if (files.isNotEmpty()){
-            LazyColumn(modifier = Modifier.fillMaxHeight().weight(1f)) {
+            LazyColumn(modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f)) {
                 items(files.size) {fileNum ->
                     //onTap StateSave solution: https://stackoverflow.com/questions/75004121/ontap-detecttapgestures-not-working-properly-as-clickables-with-same-code-an/75004569#75004569
                     val onTap: () -> Unit = {
                     viewModel.updateFileList(files[fileNum])
                 }
                     val folderListUpdated = rememberUpdatedState(onTap)
-                    FileCard(filename = files[fileNum],
+                    FileCard(viewModel,
+                        filename = files[fileNum],
                         isDirectory = isDirectory(Paths.get(files[fileNum])),
-                        isSelectable = viewModel.state.value.isActionable,
+                        isSelectable = viewModel.state.value.explorerAction == ExplorerAction.Copy,
+                        onChecked = {Log.d("CHECL", "CHECKED")},
                         modifier = Modifier
 //                            .clickable {
 //                                viewModel.updateFileList(files[fileNum])
@@ -86,12 +104,13 @@ fun FileListScreen(
                     )
                 }
             }
-            if (viewModel.state.value.isActionable){
-                Row(modifier = Modifier.fillMaxWidth().height(50.dp).background(Color.Red).clickable {
-
-                }){
-                    Text(text = "Here is buttons will be")
-                }
+            if (viewModel.state.value.explorerAction == ExplorerAction.Copy){
+                BottomBarMenu(size.value)
+//                Row(modifier = Modifier.fillMaxWidth().height(50.dp).background(Color.Red).clickable {
+//
+//                }){
+//                    Text(text = "Here is buttons will be")
+//                }
             }
         }
         else{

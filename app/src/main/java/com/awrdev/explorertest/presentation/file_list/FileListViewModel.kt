@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.awrdev.explorertest.presentation.file_list.components.ExplorerAction
 import java.nio.file.Files
 import java.nio.file.NotDirectoryException
 import java.nio.file.Path
@@ -74,7 +75,7 @@ class FileListViewModel : ViewModel() {
             state.value.currentDirectory,
             state.value.previousDirectory,
             state.value.directoryList,
-            true
+            ExplorerAction.Copy
         )
     }
 
@@ -102,7 +103,11 @@ class FileListViewModel : ViewModel() {
             state.value.currentDirectory,
             state.value.previousDirectory,
             state.value.directoryList,
-            false
+            ExplorerAction.View
         )
+    }
+
+    fun updateChecked() {
+        TODO("Not yet implemented")
     }
 }
