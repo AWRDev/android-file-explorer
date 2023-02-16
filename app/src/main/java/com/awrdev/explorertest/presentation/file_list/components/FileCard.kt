@@ -24,12 +24,13 @@ import com.awrdev.explorertest.presentation.file_list.FileListViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun FileCard(viewModel: FileListViewModel,
-                filename: String,
+fun FileCard(filename: String,
                 isSelectable: Boolean,
                 isDirectory: Boolean,
+                isChecked: Boolean,
                 onChecked: () -> Unit,
                 modifier: Modifier){
+    println("$filename - checkes is $isChecked")
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -52,7 +53,7 @@ fun FileCard(viewModel: FileListViewModel,
             .fillMaxWidth()
             .weight(1f))
         if (isSelectable){
-            Checkbox(checked = false,
+            Checkbox(checked = isChecked,
                 onCheckedChange = {
                     onChecked()
 //                    Log.d("CHECK", "Checked change")

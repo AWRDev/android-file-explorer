@@ -30,7 +30,9 @@ class FileListViewModel : ViewModel() {
         _state.value = FileListState(
             state.value.currentDirectory,
             null,
-            ArrayList(pathList!!.map { it.toString() }).sorted())
+            ArrayList(pathList!!.map { it.toString() }).sorted(),
+            ExplorerAction.View,
+            emptyList())
     }
 
     fun updateFileList(workingDirectory: String){
@@ -45,7 +47,9 @@ class FileListViewModel : ViewModel() {
             _state.value = FileListState(
                 workingDirectory,
                 state.value.currentDirectory,
-                ArrayList(pathList!!.map { it.toString() }).sorted())
+                ArrayList(pathList!!.map { it.toString() }).sorted(),
+                ExplorerAction.View,
+                emptyList())
         } catch (e: NotDirectoryException){
             Log.e("FileListViewModel", "Something happened")
         }
@@ -75,7 +79,8 @@ class FileListViewModel : ViewModel() {
             state.value.currentDirectory,
             state.value.previousDirectory,
             state.value.directoryList,
-            ExplorerAction.Copy
+            ExplorerAction.Copy,
+            List(state.value.directoryList.size) { false }
         )
     }
 
@@ -103,11 +108,23 @@ class FileListViewModel : ViewModel() {
             state.value.currentDirectory,
             state.value.previousDirectory,
             state.value.directoryList,
-            ExplorerAction.View
+            ExplorerAction.View,
+            emptyList()
         )
     }
-
-    fun updateChecked() {
-        TODO("Not yet implemented")
+    private fun updateCheckedList(entryPos: Int): List<Boolean>{
+        val updatedState = state.value.isEntryChecked.toMutableList()
+        updatedState[entryPos] = true
+        //println("Is equal:======== ${updatedState == state.value.isEntryChecked}")
+        return updatedState
+    }
+    fun updateChecked(entryPos: Int) {
+        _state.value = FileListState(
+            state.value.currentDirectory,
+            state.value.previousDirectory,
+            state.value.directoryList,
+            ExplorerAction.Copy,
+            updateCheckedList(entryPos)
+        )
     }
 }

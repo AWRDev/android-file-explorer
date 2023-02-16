@@ -84,11 +84,12 @@ fun FileListScreen(
                     viewModel.updateFileList(files[fileNum])
                 }
                     val folderListUpdated = rememberUpdatedState(onTap)
-                    FileCard(viewModel,
-                        filename = files[fileNum],
+                    val isSelectable = viewModel.state.value.explorerAction == ExplorerAction.Copy
+                    FileCard(filename = files[fileNum],
                         isDirectory = isDirectory(Paths.get(files[fileNum])),
-                        isSelectable = viewModel.state.value.explorerAction == ExplorerAction.Copy,
-                        onChecked = {Log.d("CHECL", "CHECKED")},
+                        isSelectable = isSelectable,
+                        onChecked = { viewModel.updateChecked(fileNum) },
+                        isChecked = if (isSelectable) viewModel.state.value.isEntryChecked[fileNum] else false,
                         modifier = Modifier
 //                            .clickable {
 //                                viewModel.updateFileList(files[fileNum])
