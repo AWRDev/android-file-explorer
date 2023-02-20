@@ -3,6 +3,7 @@ package com.awrdev.explorertest.presentation.file_list
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -36,24 +37,24 @@ fun FileListScreen(
         mutableStateOf(1f)
     }
     Column(modifier = Modifier.fillMaxSize()) {
-        Row() {
-            Button(onClick = {
-                for (file in files) {
-                    Log.d("TAP", file)
-                }
-                for (i in 0 until 5) {
-                    Log.d("TAP", "Numeric: " + files[i])
-                }
-            }) {
-                Text(text = "Current list is:")
-            }
-            Button(onClick = {size.value -= 0.1f}) {
-                Text(text = "-")
-            }
-            Button(onClick = {size.value += 0.1f}) {
-                Text(text = "+")
-            }
-        }
+//        Row() {
+////            Button(onClick = {
+////                for (file in files) {
+////                    Log.d("TAP", file)
+////                }
+////                for (i in 0 until 5) {
+////                    Log.d("TAP", "Numeric: " + files[i])
+////                }
+////            }) {
+////                Text(text = "Current list is:")
+////            }
+//            Button(onClick = {size.value -= 0.1f}) {
+//                Text(text = "-")
+//            }
+//            Button(onClick = {size.value += 0.1f}) {
+//                Text(text = "+")
+//            }
+//        }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -85,6 +86,7 @@ fun FileListScreen(
                 }
                     val folderListUpdated = rememberUpdatedState(onTap)
                     val isSelectable = viewModel.state.value.explorerAction == ExplorerAction.Copy
+                    val selectedState = rememberUpdatedState(isSelectable)
                     FileCard(filename = files[fileNum],
                         isDirectory = isDirectory(Paths.get(files[fileNum])),
                         isSelectable = isSelectable,
@@ -98,14 +100,19 @@ fun FileListScreen(
                                 detectTapGestures(
                                     onLongPress = { viewModel.copy() },
                                     onTap = {
-                                        folderListUpdated.value()
+                                        if (!selectedState.value){
+                                            folderListUpdated.value()
+                                        }
+                                        else{
+                                            viewModel.updateChecked(fileNum)
+                                        }
                                     }
                                 )
                             }
                     )
                 }
             }
-            if (viewModel.state.value.explorerAction == ExplorerAction.Copy){
+            AnimatedVisibility(viewModel.state.value.explorerAction != ExplorerAction.View ){
                 BottomBarMenu(size.value)
 //                Row(modifier = Modifier.fillMaxWidth().height(50.dp).background(Color.Red).clickable {
 //

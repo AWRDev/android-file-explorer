@@ -30,7 +30,6 @@ fun FileCard(filename: String,
                 isChecked: Boolean,
                 onChecked: () -> Unit,
                 modifier: Modifier){
-    println("$filename - checkes is $isChecked")
     Row(
         modifier = modifier
             .fillMaxWidth()

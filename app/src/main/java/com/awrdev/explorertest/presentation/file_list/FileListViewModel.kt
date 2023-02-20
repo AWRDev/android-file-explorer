@@ -114,7 +114,7 @@ class FileListViewModel : ViewModel() {
     }
     private fun updateCheckedList(entryPos: Int): List<Boolean>{
         val updatedState = state.value.isEntryChecked.toMutableList()
-        updatedState[entryPos] = true
+        updatedState[entryPos] = !updatedState[entryPos]
         //println("Is equal:======== ${updatedState == state.value.isEntryChecked}")
         return updatedState
     }
